@@ -46,25 +46,61 @@ var lineItems = [
 //keys are the ids of products
 //the values are the products themselves
 function generateProductsMap(products){
-  //TODO
+    var result = products.reduce(function(obj,elem) {
+                            key = elem.id;
+                            obj[key] = elem;
+                            return obj;
+                            }, {});
+    return result;
 }
 
 //returns an object
 //keys are the ids of products
 //value is the total revenue for that product
 function salesByProduct(products, lineItems){
-  //TODO
+    var result = {};
+    var newLineItems = lineItems.reduce(function(obj,elem) {
+                                        key = elem.productId;
+                                        if (!obj[key]) {
+                                        obj[key] = elem;
+                                        } else {
+                                        obj[key].quantity = obj[key].quantity + elem.quantity;
+                                        }
+                                        return obj;
+                                        }, {});
+    
+    var productsMap = generateProductsMap(products);
+    
+    for (var key in productsMap) {
+        result[key] = productsMap[key].price * newLineItems[key].quantity;
+    }
+    
+    return result;
 }
 
 //return the total revenue for all products
 function totalSales(products, lineItems){
-  //TODO
-
+    var total = 0;
+    var salesByItem = salesByProduct(products, lineItems);
+    for (var key in salesByItem) {
+        total = total + salesByItem[key];
+    }
+    return total;
 }
 
 //return the product responsible for the most revenue
 function topSellerByRevenue(products, lineItems){
-  //TODO
+    var salesByItem = salesByProduct(products, lineItems);
+    var productsMap = generateProductsMap(products);
+    var maxSales = 0;
+    var maxItem;
+    for (var key in salesByItem) {
+        if (salesByItem[key] > maxSales) {
+            maxSales = salesByItem[key];
+            maxItem = productsMap[key].name;
+        }
+    }
+    return maxItem;
 }
 console.log(`generates product map - should be
 {
